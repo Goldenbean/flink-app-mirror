@@ -19,6 +19,7 @@ import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import raptor.streaming.connector.kafka.RandomPartitioner;
 import raptor.streaming.mirror.Constants;
 import raptor.streaming.mirror.MirrorMap;
 

@@ -1,4 +1,4 @@
-package raptor.streaming;
+package raptor.streaming.connector.kafka;
 
 import java.util.Random;
 import org.apache.flink.streaming.connectors.kafka.partitioner.FlinkKafkaPartitioner;
