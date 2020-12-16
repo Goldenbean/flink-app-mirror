@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">　　
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <Pattern>
+      %red(%d{yyyy-MM-dd HH:mm:ss}) %green([%thread]) %highlight(%-5level) %boldMagenta(%logger{80}:%L) - %cyan(%msg%n)
+      </Pattern>
+    </layout>
+  </appender>
+
+
+<!--  <appender name="file" class="ch.qos.logback.core.FileAppender">-->
+<!--    <file>${log.file}</file>-->
+<!--    <append>false</append>-->
+<!--    <encoder>-->
+<!--      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{60} %X{sourceThread} - %msg%n</pattern>-->
+<!--    </encoder>-->
+<!--  </appender>-->
+
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{60} %X{sourceThread} - %msg%n</pattern>
+    </encoder>
+    <file>${log.file}</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+      <fileNamePattern>log/app.log.%i</fileNamePattern>
+      <minIndex>1</minIndex>
+      <maxIndex>3</maxIndex>
+    </rollingPolicy>
+
+    <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+      <MaxFileSize>32MB</MaxFileSize>
+    </triggeringPolicy>
+  </appender>
+
+  <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="FILE" />
+    <discardingThreshold >0</discardingThreshold>
+    <queueSize>2048</queueSize>
+  </appender>
+
+
+<!--  <logger name="akka" level="INFO">-->
+<!--    <appender-ref ref="ASYNC"/>-->
+<!--  </logger>-->
+<!--  <logger name="org.apache.kafka" level="INFO">-->
+<!--    <appender-ref ref="ASYNC"/>-->
+<!--  </logger>-->
+<!--  <logger name="org.apache.hadoop" level="INFO">-->
+<!--    <appender-ref ref="ASYNC"/>-->
+<!--  </logger>-->
+<!--  <logger name="org.apache.zookeeper" level="INFO">-->
+<!--    <appender-ref ref="ASYNC"/>-->
+<!--  </logger>-->
+
+<!--  &lt;!&ndash; Suppress the irrelevant (wrong) warnings from the Netty channel handler &ndash;&gt;-->
+<!--  <logger name="org.apache.flink.shaded.akka.org.jboss.netty.channel.DefaultChannelPipeline" level="ERROR">-->
+<!--    <appender-ref ref="ASYNC"/>-->
+<!--  </logger>-->
+
+
+  <root level="INFO">
+    <appender-ref ref="STDOUT"/>
+    <appender-ref ref="ASYNC"/>
+  </root>
+
+
+
+
+
+</configuration>
