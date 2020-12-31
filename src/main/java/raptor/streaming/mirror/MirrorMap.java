@@ -19,24 +19,27 @@ public class MirrorMap extends RichMapFunction<String, Tuple2<String, byte[]>> {
 
   private static final Logger logger = LoggerFactory.getLogger(MirrorMap.class);
 
-  private transient Counter eventCounter;
-  private transient Histogram valueHistogram;
   private transient RateLimiter rateLimiter;
+
+  private transient Counter eventCounter, eventEmptyCounter;
+  private transient Histogram valueHistogram;
 
   @Override
   public void open(Configuration parameters) {
-    rateLimiter = RateLimiter.create(1.0);
-    eventCounter = getRuntimeContext().getMetricGroup().counter("event-empty-input");
-    valueHistogram =
-        getRuntimeContext()
-            .getMetricGroup()
-            .histogram("value_histogram",
-                new DescriptiveStatisticsHistogram(10_000));
+    rateLimiter = RateLimiter.create(0.5);
+
+    eventCounter = getRuntimeContext().getMetricGroup().counter("mirror-input-count");
+    eventEmptyCounter = getRuntimeContext().getMetricGroup().counter("mirror-empty-input-count");
+
+    valueHistogram = getRuntimeContext().getMetricGroup()
+        .histogram("mirror-input-value-length-histogram",
+            new DescriptiveStatisticsHistogram(10_000));
   }
 
 
   @Override
   public Tuple2<String, byte[]> map(String input) throws Exception {
+    eventCounter.inc();
 
     if (!Strings.isNullOrEmpty(input)) {
       valueHistogram.update(input.length());
@@ -48,7 +51,7 @@ public class MirrorMap extends RichMapFunction<String, Tuple2<String, byte[]>> {
       return new Tuple2<>("", input.getBytes(StandardCharsets.UTF_8));
 
     } else {
-      eventCounter.inc();
+      eventEmptyCounter.inc();
     }
     return new Tuple2<>("NULL", "".getBytes());
   }
